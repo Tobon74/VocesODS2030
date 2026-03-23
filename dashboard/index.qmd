@@ -6,7 +6,7 @@ date: today
 lang: es
 format:
   html:
-    theme: cosmo
+    theme: [cosmo, custom.scss]
     toc: true
     toc-title: "Contenido"
     toc-depth: 3
@@ -34,18 +34,12 @@ import plotly.express as px
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 
-# Paleta de colores del proyecto
-C_CRITICO = "#E63946"
-C_ALTO    = "#F4A261"
-C_MEDIO   = "#A8DADC"
-C_BAJO    = "#1D3557"
-C_FONDO   = "#F1FAEE"
-
+C_CRITICO, C_ALTO, C_MEDIO, C_BAJO, C_FONDO = "#E63946", "#F4A261", "#A8DADC", "#1D3557", "#F1FAEE"
 COLOR_MAP = {
-    "Critico": C_CRITICO,
-    "Alto":    C_ALTO,
-    "Medio":   C_MEDIO,
-    "Bajo":    C_BAJO,
+    "Crítico": C_CRITICO,
+    "Alto": C_ALTO,
+    "Medio": C_MEDIO,
+    "Bajo": C_BAJO
 }
 
 TEMPLATE = dict(
@@ -57,11 +51,12 @@ TEMPLATE = dict(
     title_font_color="#0A2342",
 )
 
-# Cargar datos
 df = pd.read_csv("../datos/clean/vulnerabilidad_neuroeducativa.csv")
 ```
 
----
+::: {.grid}
+
+::: {.g-col-12 .g-col-md-5}
 
 ## El problema que nadie nombra correctamente
 
@@ -73,7 +68,9 @@ Pero la neurociencia nos dice algo diferente:
 > Cuando un niño crece en pobreza extrema, con desnutrición crónica y exposición
 > a violencia, su corteza prefrontal se desarrolla de manera distinta.
 > No es metáfora. Es anatomía.
+:::
 
+::: {.story-section}
 Este tablero cruza datos oficiales de INEGI, CONEVAL, SEP y ENSANUT para
 mostrar dónde en México ese daño es más probable — y por qué los ODS 3 y 4
 son, en realidad, el mismo problema.
@@ -82,38 +79,28 @@ son, en realidad, el mismo problema.
 
 ## ¿Qué es el Índice de Vulnerabilidad Neuroeducativa?
 
-El **IVN** es un índice compuesto construido para este proyecto que integra
-cuatro dimensiones con respaldo científico:
+El **IVN** es un índice compuesto que integra cuatro dimensiones:
 
-| Dimensión | Peso | Fuente | Fundamento científico |
-|---|---|---|---|
-| Rezago educativo | 30% | SEP 2022 | Blair & Raver (2016) |
-| Desnutrición infantil | 30% | ENSANUT 2022 | Hackman et al. (2010) |
-| Pobreza extrema | 25% | CONEVAL 2022 | McEwen (2008) |
-| Población 0-4 años | 15% | INEGI Censo 2020 | Heckman (2006) |
+| Dimensión | Peso | Fuente |
+|---|---|---|
+| Rezago educativo | 30% | SEP 2022 |
+| Desnutrición infantil | 30% | ENSANUT 2022 |
+| Pobreza extrema | 25% | CONEVAL 2022 |
+| Población 0-4 años | 15% | INEGI 2020 |
 
-Los pesos **no son arbitrarios** — reflejan la jerarquía causal establecida
-en la literatura de neurociencias del desarrollo. La desnutrición y el rezago
-tienen el mismo peso porque ambos son causas directas de alteración prefrontal,
-no consecuencias.
+Los pesos reflejan la jerarquía causal: la desnutrición y el rezago son causas directas de alteración prefrontal.
+:::
 
----
-
-## El mapa de la vulnerabilidad
+::: {.g-col-12 .g-col-md-7}
 
 ```{python}
 #| label: mapa-ivn
-#| fig-cap: "Índice de Vulnerabilidad Neuroeducativa por estado — a mayor valor, mayor riesgo de daño neurológico diferencial"
-
+#| fig-cap: "Índice de Vulnerabilidad Neuroeducativa por estado"
 df["cve_str"] = df["cve_estado"].astype(str).str.zfill(2)
 
 fig1 = px.choropleth(
     df,
-    geojson=(
-        "https://raw.githubusercontent.com/isaacarroyov/data_viz_practice/"
-        "main/Python/visualizations-from-tweets/2022/2022-05_30DayChartChallenge/"
-        "data/estados_mexico.geojson"
-    ),
+    geojson="https://raw.githubusercontent.com/isaacarroyov/data_viz_practice/main/Python/visualizations-from-tweets/2022/2022-05_30DayChartChallenge/data/estados_mexico.geojson",
     locations="cve_str",
     featureidkey="properties.CVE_ENT",
     color="IVN",
@@ -141,6 +128,7 @@ fig1 = px.choropleth(
     },
     title="El Cerebro Vulnerable — IVN por estado",
 )
+
 fig1.update_geos(fitbounds="locations", visible=False, bgcolor=C_FONDO)
 fig1.update_layout(
     **TEMPLATE,
@@ -150,9 +138,13 @@ fig1.update_layout(
         ticktext=["Bajo", "Moderado", "Medio", "Alto", "Crítico"],
     ),
     margin=dict(l=0, r=0, t=60, b=0),
-    height=520,
+    height=600,
 )
+
 fig1.show()
+
+::: 
+
 ```
 
 ---
@@ -163,6 +155,8 @@ La correlación entre rezago educativo y desnutrición infantil en México
 supera **r = 0.85**. No es coincidencia — es causalidad bidireccional:
 un cerebro desnutrido aprende menos, y un entorno sin educación perpetúa
 la desnutrición.
+---
+::: {.g-col-12 .g-col-md-7}
 
 ```{python}
 #| label: scatter-ods
@@ -212,9 +206,12 @@ fig2.update_layout(
     legend=dict(title="Nivel de urgencia", orientation="h", y=-0.15),
 )
 fig2.show()
+
 ```
 
 ---
+::: 
+::: {.g-col-12 .g-col-md-7}
 
 ## La brecha: ODS 3 y ODS 4 estado por estado
 
@@ -222,7 +219,7 @@ fig2.show()
 #| label: brecha-barras
 #| fig-cap: "Los estados del sur concentran simultáneamente el mayor rezago educativo y la mayor desnutrición infantil — la firma territorial del problema."
 
-df_sorted = df.sort_values("IVN", ascending=True)
+df_sorted = df.sort_values("#NVI", ascending=True)
 
 fig4 = make_subplots(
     rows=1, cols=2,
@@ -362,3 +359,4 @@ McEwen, B.S. (2008). Central effects of stress hormones in health and disease. *
 ---
 
 *Equipo Voces ODS 2030 · HackODS UNAM 2026 · Datos 100% abiertos y reproducibles*
+
