@@ -48,6 +48,7 @@ TEMPLATE = dict(
 )
 
 df = pd.read_csv("../datos/clean/vulnerabilidad_neuroeducativa.csv")
+df["cve_str"] = df["cve_estado"].astype(str).str.zfill(2)
 ```
 
 <!-- ══════════════════════════════════════════════════════
@@ -110,10 +111,58 @@ url_mapa = "https://raw.githubusercontent.com/JuveCampos/MexicoSinIslas/master/S
 respuesta = requests.get(url_mapa)
 mapa_mexico = respuesta.json()
 
+# Mapeo nombre → CVE_EDO del GeoJSON
+geo_map = {}
+for f in mapa_mexico["features"]:
+    nombre = f["properties"]["ENTIDAD"].title()
+    cve = int(f["properties"]["CVE_EDO"])
+    geo_map[nombre] = cve
+
+# Diccionario manual de equivalencias nombre CSV → nombre GeoJSON
+equiv = {
+    "Aguascalientes": "Aguascalientes",
+    "Baja California": "Baja California",
+    "Baja California Sur": "Baja California Sur",
+    "Campeche": "Campeche",
+    "Coahuila": "Coahuila De Zaragoza",
+    "Colima": "Colima",
+    "Chiapas": "Chiapas",
+    "Chihuahua": "Chihuahua",
+    "Ciudad de México": "Ciudad De México",
+    "Durango": "Durango",
+    "Guanajuato": "Guanajuato",
+    "Guerrero": "Guerrero",
+    "Hidalgo": "Hidalgo",
+    "Jalisco": "Jalisco",
+    "Estado de México": "México",
+    "Michoacán": "Michoacán De Ocampo",
+    "Morelos": "Morelos",
+    "Nayarit": "Nayarit",
+    "Nuevo León": "Nuevo León",
+    "Oaxaca": "Oaxaca",
+    "Puebla": "Puebla",
+    "Querétaro": "Querétaro",
+    "Quintana Roo": "Quintana Roo",
+    "San Luis Potosí": "San Luis Potosí",
+    "Sinaloa": "Sinaloa",
+    "Sonora": "Sonora",
+    "Tabasco": "Tabasco",
+    "Tamaulipas": "Tamaulipas",
+    "Tlaxcala": "Tlaxcala",
+    "Veracruz": "Veracruz De Ignacio De La Llave",
+    "Yucatán": "Yucatán",
+    "Zacatecas": "Zacatecas",
+}
+
+# Agrega columna con CVE_EDO del GeoJSON al DataFrame
+df["cve_geo"] = df["estado"].map(
+    lambda e: geo_map.get(equiv.get(e, e), None)
+)
+
 fig1 = px.choropleth(
     df,
     geojson=mapa_mexico,
-    locations="cve_estado",
+    locations="cve_geo",
     featureidkey="properties.CVE_EDO",
     color="IVN",
     hover_name="estado",
@@ -123,7 +172,7 @@ fig1 = px.choropleth(
         "rezago_educativo_pct": ":.1f",
         "desnutricion_cronica_pct": ":.1f",
         "pobreza_extrema_pct": ":.1f",
-        "cve_estado": False
+        "cve_geo": False,
     },
     color_continuous_scale=[
         [0.0, "#1D3557"],
@@ -140,7 +189,6 @@ fig1 = px.choropleth(
     },
     title="Índice de Vulnerabilidad Neuroeducativa por estado",
 )
-
 fig1.update_geos(fitbounds="locations", visible=False, bgcolor=C_FONDO)
 fig1.update_layout(
     **TEMPLATE,
@@ -152,7 +200,6 @@ fig1.update_layout(
     margin=dict(l=0, r=0, t=50, b=0),
     height=560,
 )
-
 fig1.show()
 ```
 
@@ -396,7 +443,6 @@ fig4.add_trace(go.Bar(
 fig4.update_layout(
     **TEMPLATE,
     height=720,
-    title_text="32 estados · ODS 3 y ODS 4 van de la mano",
     showlegend=False,
     bargap=0.12,
 )
