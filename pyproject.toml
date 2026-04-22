@@ -1,7 +1,7 @@
 [project]
 name = "hackods-vocesods2030"
 version = "0.1.0"
-description = "Add your description here"
+description = "El Cerebro Vulnerable: Índice de Vulnerabilidad Neuroeducativa (IVN) para el monitoreo de los ODS 3 y 4 en México"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [

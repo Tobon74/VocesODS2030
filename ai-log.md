@@ -72,6 +72,13 @@ Mi criterio operativo: **si la tarea requiere conocimiento del cerebro, del ento
 
 ---
 
+### 2026-04-22 | Gemini | Investigacion de Autor
+
+- **Tarea**: Se utilizó `Gemini`para la optimización de la estructura de datos y la generación de visualizaciones en `Plotly`
+- **Resultado**: bajo la supervisión clínica y técnica de Carlos Villa Tobón, quien validó los indicadores del IVN basados en literatura de neurociencias (Heckman, Blair)."
+- **Decisión propia**: Resumir el rabajo de Hekman para crear un texto breve sobre desnutriciòn y economia. 
+---
+
 ## Lo que NO delegué a la IA
 
 - **La elección del tema**: Neuroeducación en sectores vulnerables surge de mi práctica clínica con poblaciones de alto riesgo y mi formación en neurociencias. No es un tema generado por IA.
