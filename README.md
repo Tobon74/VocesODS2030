@@ -71,18 +71,20 @@ pip install pandas numpy plotly requests geopandas
 
 ### Ejecución paso a paso
 ```bash
-# 1. Descargar datos de INEGI (requiere token)
-python scripts/01_descarga_inegi.py
+# 0. Preparar el entorno (Solo la primera vez)
+uv sync
+
+# 1. Descargar datos de INEGI (requiere token en .env)
+uv run python scripts/01_descarga_inegi.py
 
 # 2. Limpiar datos y calcular el IVN
-python scripts/02_limpieza.py
+uv run python scripts/02_limpieza.py
 
 # 3. Generar visualizaciones
-python scripts/03_visualizaciones.py
+uv run python scripts/03_visualizaciones.py
 
-# 4. Renderizar el dashboard
-cd dashboard
-quarto render index.qmd
+# 4. Renderizar el dashboard profesional
+uv run quarto render dashboard/index.qmd
 ```
 
 ---
